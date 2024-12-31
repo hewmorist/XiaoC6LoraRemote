@@ -20,7 +20,7 @@
 #define ACKNOWLEDGE 0x25
 
 //define LED
-#define LED 10
+#define LED 15
 
 //Will wake up when "LID" or "DOOR" pins go HIGH
 #define DEEP_SLEEP_GPIO_ANY_HIGH
@@ -262,9 +262,9 @@ Serial.begin(9600);
 void loop()
 {
 
-    digitalWrite(LED, HIGH);  // Turn LED on
+    digitalWrite(LED, LOW);  // Turn LED on
     delay(1000);
-    digitalWrite(LED, LOW);  // Turn LED off
+    digitalWrite(LED, HIGH);  // Turn LED off
   
 
 
