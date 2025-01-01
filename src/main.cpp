@@ -5,15 +5,15 @@
 #include "driver/gpio.h"
 #include "esp_sleep.h"
 
-#define M0 8
-#define M1 9
-#define AUX 4
+#define M0 19
+#define M1 20
+#define AUX 22
 
-#define TXD2 7 
-#define RXD2 6
+#define TXD2 16 
+#define RXD2 17
 
-#define LID 2 //RTC wakeup is available on GPIO0-GPIO5
-#define DOOR 3
+#define LID 1 //RTC wakeup is available on GPIO0-GPIO5
+#define DOOR 2
 
 #define FULL 0x55
 #define EMPTY 0xAA
@@ -27,6 +27,7 @@
 
 gpio_num_t LID_GPIO = (gpio_num_t)LID;
 gpio_num_t DOOR_GPIO = (gpio_num_t)DOOR;
+gpio_num_t LED_GPIO = (gpio_num_t)LED;
 
 // keep track of how many times we've come out of deep sleep
 RTC_DATA_ATTR int sleep_count = 0;
@@ -150,35 +151,19 @@ void show_wake_reason()
 // count down 3 seconds and then go to sleep
 void enter_sleep()
 {
-  Serial.println("Going to sleep...");
-  delay(1000);
-  Serial.println("3");
-  delay(1000);
-  Serial.println("2");
-  delay(1000);
-  Serial.println("1");
-  delay(1000);
-
-
   pinMode(LID, INPUT_PULLDOWN);
   gpio_hold_en(LID_GPIO);
   pinMode(DOOR, INPUT_PULLDOWN);
   gpio_hold_en(DOOR_GPIO);
   esp_deep_sleep_enable_gpio_wakeup((1 << LID_GPIO) | (1 << DOOR_GPIO), ESP_GPIO_WAKEUP_GPIO_HIGH);
+  
+  digitalWrite(LED, HIGH);  // Turn LED off
 
   esp_deep_sleep_start();
 }
 
 void enter_full_sleep()
 {
-  Serial.println("Going to full sleep...");
-  delay(1000);
-  Serial.println("3");
-  delay(1000);
-  Serial.println("2");
-  delay(1000);
-  Serial.println("1");
-  delay(1000);
 
   pinMode(LID, INPUT_PULLDOWN);
   gpio_hold_en(LID_GPIO);
@@ -186,25 +171,21 @@ void enter_full_sleep()
   gpio_hold_en(DOOR_GPIO);
   esp_deep_sleep_enable_gpio_wakeup((1 << DOOR_GPIO), ESP_GPIO_WAKEUP_GPIO_HIGH); //Only wake if Door is opened
 
+  digitalWrite(LED, HIGH);  // Turn LED off
+
   esp_deep_sleep_start();
 }
 
 void enter_empty_sleep()
 {
-  Serial.println("Going to empty sleep...");
-  delay(1000);
-  Serial.println("3");
-  delay(1000);
-  Serial.println("2");
-  delay(1000);
-  Serial.println("1");
-  delay(1000);
 
   pinMode(LID, INPUT_PULLDOWN);
   gpio_hold_en(LID_GPIO);
   pinMode(DOOR, INPUT_PULLDOWN);
   gpio_hold_en(DOOR_GPIO);
   esp_deep_sleep_enable_gpio_wakeup((1 << LID_GPIO), ESP_GPIO_WAKEUP_GPIO_HIGH); //Only wake if LID is opened
+
+  digitalWrite(LED, HIGH);  // Turn LED off
 
 
   esp_deep_sleep_start();
@@ -227,7 +208,7 @@ Serial.begin(9600);
   pinMode(AUX, INPUT_PULLUP);
   pinMode(LED, OUTPUT);
 
-  
+  digitalWrite(LED, LOW);  // Turn LED on
    
 
 // Check if first setup
@@ -262,9 +243,8 @@ Serial.begin(9600);
 void loop()
 {
 
-    digitalWrite(LED, LOW);  // Turn LED on
-    delay(1000);
-    digitalWrite(LED, HIGH);  // Turn LED off
+    
+    
   
 
 
